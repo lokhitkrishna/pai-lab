@@ -1,0 +1,28 @@
+from collections import deque
+
+a = int(input("Enter Jug1 capacity: "))
+b = int(input("Enter Jug2 capacity: "))
+target = int(input("Enter target amount: "))
+target_jug = input("Target in Jug1 or Jug2? ").strip().lower()
+
+q, visited = deque([(0,0,[])]), set()
+
+def check(x,y): 
+    return (target_jug=='jug1' and x==target) or (target_jug=='jug2' and y==target)
+
+while q:
+    x, y, steps = q.popleft()
+    if (x,y) in visited: continue
+    visited.add((x,y))
+    steps = steps + [(x,y)]
+    if check(x,y):
+        for s in steps: print(f"Jug1:{s[0]} Jug2:{s[1]}")
+        break
+    moves = [
+        (a, y), (x, b), (0, y), (x, 0), 
+        (x-min(x,b-y), y+min(x,b-y)), (x+min(y,a-x), y-min(y,a-x))
+    ]
+    for nx, ny in moves:
+        if (nx, ny) not in visited: q.append((nx, ny, steps))
+else:
+    print("Error: Target not reachable")
